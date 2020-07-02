@@ -33,7 +33,6 @@ var choices = [
 ];
 
 function init() {
-    console.log("Welcome to Employee Tracker");
     inquirer
         .prompt([
             {
@@ -80,7 +79,30 @@ function init() {
 }
 
 function viewEmp() {
-    console.log("view employee");
+    const query = `
+        SELECT a.id, a.first_name, a.last_name, b.title, c.name, b.salary
+        FROM employee a
+        INNER JOIN role b ON (a.role_id = b.id)
+        INNER JOIN department c ON (b.department_id = c.id)
+        ORDER BY a.id
+        `;
+    connection.query(query, function (err, res) {
+        // console.table(res);
+        var empArray = [];
+        res.forEach((employee) => {
+            var obj = {
+                ID: employee.id,
+                "First Name": employee.first_name,
+                "Last Name": employee.last_name,
+                Title: employee.title,
+                Department: employee.name,
+                Salary: employee.salary,
+            };
+            empArray.push(obj);
+        });
+        console.table(empArray);
+        init();
+    });
 }
 
 function viewDept() {
