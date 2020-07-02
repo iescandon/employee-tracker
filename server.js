@@ -22,17 +22,29 @@ connection.connect(function (err) {
 var choices = [
     "View ALL Employees",
     "View ALL Employees by Department",
-    "View ALL Employees by Manager",
+    "View ALL Employees by Roles",
     "Add Employee",
-    "Remove Employee",
-    "Update Employee Role",
-    "Update Employee Manager",
-    "View ALL Roles",
+    "Add Department",
     "Add Role",
+    "Remove Employee",
+    "Remove Department",
     "Remove Role",
+    "Update Employee Role",
 ];
 
-var departments = ["Sales", "Engineering", "Finance", "Legal"];
+var departments = [];
+connection.query("SELECT department FROM department", function (err, res) {
+    res.forEach((item) => {
+        departments.push(item.department);
+    });
+});
+
+var roles = [];
+connection.query("SELECT title FROM role", function (err, res) {
+    res.forEach((item) => {
+        roles.push(item.title);
+    });
+});
 
 function init() {
     inquirer
@@ -52,29 +64,29 @@ function init() {
                 case "View ALL Employees by Department":
                     viewDept();
                     break;
-                case "View ALL Employees by Manager":
-                    viewManager();
+                case "View ALL Employees by Roles":
+                    viewRoles();
                     break;
                 case "Add Employee":
                     addEmp();
                     break;
-                case "Remove Employee":
-                    removeEmp();
-                    break;
-                case "Update Employee Role":
-                    updateEmp();
-                    break;
-                case "Update Employee Manager":
-                    updateManager();
-                    break;
-                case "View ALL Roles":
-                    viewRoles();
+                case "Add Department":
+                    addDept();
                     break;
                 case "Add Role":
                     addRole();
                     break;
+                case "Remove Employee":
+                    removeEmp();
+                    break;
+                case "Remove Department":
+                    removeDept();
+                    break;
                 case "Remove Role":
                     removeRole();
+                    break;
+                case "Update Employee Role":
+                    updateEmp();
                     break;
             }
         });
@@ -119,34 +131,55 @@ function viewDept() {
         });
 }
 
-function viewManager() {
-    console.log("view manager");
+function viewRoles() {
+    inquirer
+        .prompt([
+            {
+                type: "list",
+                name: "role",
+                message: "Which role would you like to view?",
+                choices: roles,
+            },
+        ])
+        .then(function (response) {
+            const query = `
+                SELECT a.id, a.first_name, a.last_name, b.title, c.department, b.salary
+                FROM employee a
+                INNER JOIN role b ON (a.role_id = b.id)
+                INNER JOIN department c ON (b.department_id = c.id)
+                WHERE b.title = ?
+            `;
+            connection.query(query, response.role, function (err, res) {
+                console.table(res);
+                init();
+            });
+        });
 }
 
 function addEmp() {
     console.log("add employee");
 }
 
-function removeEmp() {
-    console.log("remove employee");
-}
-
-function updateEmp() {
-    console.log("update employee");
-}
-
-function updateManager() {
-    console.log("update manager");
-}
-
-function viewRoles() {
-    console.log("view roles");
+function addDept() {
+    console.log("add department");
 }
 
 function addRole() {
     console.log("add role");
 }
 
+function removeEmp() {
+    console.log("remove employee");
+}
+
+function removeDept() {
+    console.log("remove department");
+}
+
 function removeRole() {
     console.log("remove role");
+}
+
+function updateEmp() {
+    console.log("update employee");
 }
