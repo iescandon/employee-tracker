@@ -32,6 +32,8 @@ var choices = [
     "Remove Role",
 ];
 
+var departments = ["Sales", "Engineering", "Finance", "Legal"];
+
 function init() {
     inquirer
         .prompt([
@@ -80,33 +82,41 @@ function init() {
 
 function viewEmp() {
     const query = `
-        SELECT a.id, a.first_name, a.last_name, b.title, c.name, b.salary
+        SELECT a.id, a.first_name, a.last_name, b.title, c.department, b.salary
         FROM employee a
         INNER JOIN role b ON (a.role_id = b.id)
         INNER JOIN department c ON (b.department_id = c.id)
         ORDER BY a.id
         `;
     connection.query(query, function (err, res) {
-        // console.table(res);
-        var empArray = [];
-        res.forEach((employee) => {
-            var obj = {
-                ID: employee.id,
-                "First Name": employee.first_name,
-                "Last Name": employee.last_name,
-                Title: employee.title,
-                Department: employee.name,
-                Salary: employee.salary,
-            };
-            empArray.push(obj);
-        });
-        console.table(empArray);
+        console.table(res);
         init();
     });
 }
 
 function viewDept() {
-    console.log("view department");
+    inquirer
+        .prompt([
+            {
+                type: "list",
+                name: "dept",
+                message: "Which department would you like to view?",
+                choices: departments,
+            },
+        ])
+        .then(function (response) {
+            const query = `
+                SELECT a.id, a.first_name, a.last_name, b.title, c.department, b.salary
+                FROM employee a
+                INNER JOIN role b ON (a.role_id = b.id)
+                INNER JOIN department c ON (b.department_id = c.id)
+                WHERE c.department = ?
+            `;
+            connection.query(query, response.dept, function (err, res) {
+                console.table(res);
+                init();
+            });
+        });
 }
 
 function viewManager() {
