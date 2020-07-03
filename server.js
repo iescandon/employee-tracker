@@ -329,13 +329,13 @@ function removeEmp() {
             var name = response.employee.split(" ");
 
             connection.query(
-                "DELETE FROM employee WHERE ? AND ?",
+                "DELETE FROM employee WHERE ?",
                 {
                     first_name: name[0],
                 },
-                {
-                    last_name: name[1],
-                },
+                // {
+                //     last_name: name[1],
+                // },
                 function (err, res) {
                     if (err) throw err;
                     console.log("Employee removed successfully!");
