@@ -1,6 +1,9 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql2");
 var cTable = require("console.table");
+const logo = require("asciiart-logo");
+const config = require("./package.json");
+console.log(logo(config).render());
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -15,7 +18,7 @@ connection.connect(function (err) {
         console.error("error connection: " + err.stack);
         return;
     }
-    console.log("connected as id " + connection.threadId);
+    // console.log("connected as id " + connection.threadId);
     init();
 });
 

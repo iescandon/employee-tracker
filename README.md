@@ -34,15 +34,15 @@ Build a command-line application that at a minimum allows the user to:
 
 -   View departments, roles, employees
 
--   Update employee roles
+-   Update employee roles TODO - Rework
 
 Bonus points if you're able to:
 
--   Update employee managers
+-   Update employee managers TODO
 
--   View employees by manager
+-   View employees by manager TODO
 
--   Delete departments, roles, and employees
+-   Delete departments, roles, and employees TODO - Rework
 
 -   View the total utilized budget of a department -- ie the combined salaries of all employees in that department
 
