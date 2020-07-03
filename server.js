@@ -87,6 +87,9 @@ function getEmp() {
 }
 
 function init() {
+    getDept();
+    getRoles();
+    getEmp();
     inquirer
         .prompt([
             {
@@ -97,9 +100,6 @@ function init() {
             },
         ])
         .then(function (response) {
-            getDept();
-            getRoles();
-            getEmp();
             switch (response.choice) {
                 case "View ALL Employees":
                     viewEmp();
