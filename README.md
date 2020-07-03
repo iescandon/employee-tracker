@@ -90,19 +90,19 @@ How do you deliver this? Here are some guidelines:
 
     -   View departments, roles, employees
 
-    -   Update employee roles
+    -   Update employee roles //TODO Rework to take in 2 conditions
 
 ## Bonus
 
 -   The command-line application should allow users to:
 
-    -   Update employee managers
+    -   Update employee managers //TODO
 
-    -   View employees by manager
+    -   View employees by manager //TODO
 
-    -   Delete departments, roles, and employees
+    -   Delete departments, roles, and employees //TODO Rework employees to take in 2 conditions
 
-    -   View the total utilized budget of a department -- ie the combined salaries of all employees in that department
+    -   View the total utilized budget of a department -- ie the combined salaries of all employees in that department //TODO
 
 ## Commit Early and Often
 

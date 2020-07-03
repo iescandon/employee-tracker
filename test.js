@@ -10,7 +10,7 @@ var connection = mysql.createConnection({
     port: 3306,
     user: "root",
     password: "password",
-    database: "cms_db",
+    database: "employeeTracker_db",
 });
 
 connection.connect(function (err) {
@@ -86,13 +86,12 @@ function getEmp() {
                 var fullName = `${item.first_name} ${item.last_name}`;
                 employees.push(fullName);
             });
-
             employeeIDS = [];
             res.forEach((item) => {
                 var obj = {
                     id: item.id,
-                    first_name: item.firstName,
-                    last_name: item.lastName,
+                    firstName: item.first_name,
+                    lastName: item.last_name,
                 };
                 employeeIDS.push(obj);
             });
@@ -429,6 +428,12 @@ function updateEmp() {
         ])
         .then(function (response) {
             var name = response.employee.split(" ");
+            var empID;
+            employeeIDS.forEach((item) => {
+                if (name[0] === item.firstName && name[1] === item.lastName) {
+                    empID = item.id;
+                }
+            });
             var roleID = "";
             rolesIDS.forEach((item) => {
                 if (response.newRole === item.role) {
@@ -443,8 +448,7 @@ function updateEmp() {
                         role_id: roleID,
                     },
                     {
-                        first_name: name[0],
-                        // last_name = name[1],
+                        id: empID,
                     },
                 ],
                 function (err, res) {
@@ -455,9 +459,3 @@ function updateEmp() {
             );
         });
 }
-
-getDept();
-
-getRoles();
-
-getEmp();
