@@ -396,7 +396,48 @@ function removeDept() {
 }
 
 function updateEmp() {
-    console.log("update employee");
+    inquirer
+        .prompt([
+            {
+                type: "list",
+                name: "employee",
+                message: "Which employee would you like to update?",
+                choices: employees,
+            },
+            {
+                type: "list",
+                name: "newRole",
+                message: "What is their new role?",
+                choices: roles,
+            },
+        ])
+        .then(function (response) {
+            var name = response.employee.split(" ");
+            var roleID = "";
+            rolesIDS.forEach((item) => {
+                if (response.newRole === item.role) {
+                    roleID = item.id;
+                }
+            });
+
+            connection.query(
+                "UPDATE employee SET ? WHERE ?",
+                [
+                    {
+                        role_id: roleID,
+                    },
+                    {
+                        first_name: name[0],
+                        // last_name = name[1],
+                    },
+                ],
+                function (err, res) {
+                    if (err) throw err;
+                    console.log(`${response.employee}'s role is updated!`);
+                    init();
+                }
+            );
+        });
 }
 
 getDept();
