@@ -33,20 +33,33 @@ var choices = [
     "Exit",
 ];
 var departments = [];
+var deptIDS = [];
 var roles = [];
 var rolesIDS = [];
 var employees = [];
 
 function getDept() {
-    connection.query("SELECT department FROM department", function (err, res) {
+    connection.query("SELECT id, department FROM department", function (
+        err,
+        res
+    ) {
+        departments = [];
         res.forEach((item) => {
             departments.push(item.department);
+        });
+        res.forEach((item) => {
+            var obj = {
+                id: item.id,
+                department: item.department,
+            };
+            deptIDS.push(obj);
         });
     });
 }
 
 function getRoles() {
     connection.query("SELECT id, title FROM role", function (err, res) {
+        roles = [];
         res.forEach((item) => {
             roles.push(item.title);
         });
@@ -65,6 +78,7 @@ function getEmp() {
         err,
         res
     ) {
+        employess = [];
         res.forEach((item) => {
             var fullName = `${item.first_name} ${item.last_name}`;
             employees.push(fullName);
@@ -83,6 +97,9 @@ function init() {
             },
         ])
         .then(function (response) {
+            getDept();
+            getRoles();
+            getEmp();
             switch (response.choice) {
                 case "View ALL Employees":
                     viewEmp();
@@ -231,11 +248,71 @@ function addEmp() {
 }
 
 function addRole() {
-    console.log("add roles");
+    inquirer
+        .prompt([
+            {
+                type: "input",
+                name: "newRole",
+                message: "What is the new role that you would like to add?",
+            },
+            {
+                type: "input",
+                name: "salary",
+                message: "What is the salary?",
+            },
+            {
+                type: "list",
+                name: "dept",
+                message: "What department does it belong to?",
+                choices: departments,
+            },
+        ])
+        .then(function (response) {
+            var deptID = "";
+            deptIDS.forEach((item) => {
+                if (response.dept === item.department) {
+                    deptID = item.id;
+                }
+            });
+            connection.query(
+                "INSERT INTO role SET ?",
+                {
+                    title: response.newRole,
+                    salary: response.salary,
+                    department_id: deptID,
+                },
+                function (err, res) {
+                    if (err) throw err;
+                    console.log("Role added successfully!");
+                    init();
+                }
+            );
+        });
 }
 
 function addDept() {
-    console.log("add department");
+    inquirer
+        .prompt([
+            {
+                type: "input",
+                name: "newDept",
+                message:
+                    "What is the new department that you would like to add?",
+            },
+        ])
+        .then(function (response) {
+            connection.query(
+                "INSERT INTO department SET ?",
+                {
+                    department: response.newDept,
+                },
+                function (err, res) {
+                    if (err) throw err;
+                    console.log("Department added successfully!");
+                    init();
+                }
+            );
+        });
 }
 
 function removeEmp() {
@@ -269,11 +346,53 @@ function removeEmp() {
 }
 
 function removeRole() {
-    console.log(roles);
+    inquirer
+        .prompt([
+            {
+                type: "list",
+                name: "role",
+                message: "Which role would you like to remove?",
+                choices: roles,
+            },
+        ])
+        .then(function (response) {
+            connection.query(
+                "DELETE FROM role WHERE ?",
+                {
+                    title: response.role,
+                },
+                function (err, res) {
+                    if (err) throw err;
+                    console.log("Role removed successfully!");
+                    init();
+                }
+            );
+        });
 }
 
 function removeDept() {
-    console.log(departments);
+    inquirer
+        .prompt([
+            {
+                type: "list",
+                name: "department",
+                message: "Which role would you like to remove?",
+                choices: departments,
+            },
+        ])
+        .then(function (response) {
+            connection.query(
+                "DELETE FROM department WHERE ?",
+                {
+                    department: response.department,
+                },
+                function (err, res) {
+                    if (err) throw err;
+                    console.log("Department removed successfully!");
+                    init();
+                }
+            );
+        });
 }
 
 function updateEmp() {
