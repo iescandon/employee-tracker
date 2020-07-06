@@ -10,7 +10,7 @@ var connection = mysql.createConnection({
     port: 3306,
     user: "root",
     password: "password",
-    database: "cms_db",
+    database: "employeeTracker_db",
 });
 
 connection.connect(function (err) {
@@ -33,6 +33,7 @@ var choices = [
     "Remove Role",
     "Remove Department",
     "Update Employee Role",
+    "Get Budget",
     "Exit",
 ];
 var departments = [];
@@ -86,13 +87,12 @@ function getEmp() {
                 var fullName = `${item.first_name} ${item.last_name}`;
                 employees.push(fullName);
             });
-
             employeeIDS = [];
             res.forEach((item) => {
                 var obj = {
                     id: item.id,
-                    first_name: item.firstName,
-                    last_name: item.lastName,
+                    firstName: item.first_name,
+                    lastName: item.last_name,
                 };
                 employeeIDS.push(obj);
             });
@@ -144,6 +144,9 @@ function init() {
                     break;
                 case "Update Employee Role":
                     updateEmp();
+                    break;
+                case "Get Budget":
+                    getBudget();
                     break;
                 case "Exit":
                     connection.end();
@@ -429,6 +432,12 @@ function updateEmp() {
         ])
         .then(function (response) {
             var name = response.employee.split(" ");
+            var empID;
+            employeeIDS.forEach((item) => {
+                if (name[0] === item.firstName && name[1] === item.lastName) {
+                    empID = item.id;
+                }
+            });
             var roleID = "";
             rolesIDS.forEach((item) => {
                 if (response.newRole === item.role) {
@@ -443,8 +452,7 @@ function updateEmp() {
                         role_id: roleID,
                     },
                     {
-                        first_name: name[0],
-                        // last_name = name[1],
+                        id: empID,
                     },
                 ],
                 function (err, res) {
@@ -456,8 +464,70 @@ function updateEmp() {
         });
 }
 
-getDept();
+function getBudget() {
+    inquirer
+        .prompt([
+            {
+                type: "list",
+                name: "budget",
+                message: "Which budget would you like to view?",
+                choices: [
+                    "All departments combined",
+                    "An individual department",
+                ],
+            },
+        ])
+        .then(function (response) {
+            if (response.budget === "All departments combined") {
+                const query = `
+                    SELECT b.salary
+                    FROM employee a
+                    INNER JOIN role b ON (a.role_id = b.id)
+                    INNER JOIN department c ON (b.department_id = c.id)
+                    `;
+                connection.query(query, function (err, res) {
+                    var budget = 0;
+                    res.forEach((emp) => {
+                        budget += parseInt(emp.salary);
+                    });
+                    console.log(
+                        `The combined budget of all departments is: $${budget}`
+                    );
+                    init();
+                });
+            } else {
+                getDeptBudget();
+            }
+        });
+}
 
-getRoles();
-
-getEmp();
+function getDeptBudget() {
+    inquirer
+        .prompt([
+            {
+                type: "list",
+                name: "dept",
+                message: "Which department budget would you like to view?",
+                choices: departments,
+            },
+        ])
+        .then(function (response) {
+            const query = `
+                    SELECT b.salary
+                    FROM employee a
+                    INNER JOIN role b ON (a.role_id = b.id)
+                    INNER JOIN department c ON (b.department_id = c.id)
+                    WHERE c.department = ?
+                    `;
+            connection.query(query, response.dept, function (err, res) {
+                var budget = 0;
+                res.forEach((emp) => {
+                    budget += parseInt(emp.salary);
+                });
+                console.log(
+                    `The budget of the ${response.dept} department is: $${budget}`
+                );
+                init();
+            });
+        });
+}

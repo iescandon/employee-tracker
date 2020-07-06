@@ -90,7 +90,7 @@ How do you deliver this? Here are some guidelines:
 
     -   View departments, roles, employees
 
-    -   Update employee roles //TODO Rework to take in 2 conditions
+    -   Update employee roles
 
 ## Bonus
 
@@ -100,9 +100,9 @@ How do you deliver this? Here are some guidelines:
 
     -   View employees by manager //TODO
 
-    -   Delete departments, roles, and employees //TODO Rework employees to take in 2 conditions
+    -   Delete departments, roles, and employees //TODO Add error messages when deleting depts/roles that are dependent by employees.
 
-    -   View the total utilized budget of a department -- ie the combined salaries of all employees in that department //TODO
+    -   View the total utilized budget of a department -- ie the combined salaries of all employees in that department
 
 ## Commit Early and Often
 
