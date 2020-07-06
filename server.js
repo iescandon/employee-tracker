@@ -381,8 +381,13 @@ function removeRole() {
                     title: response.role,
                 },
                 function (err, res) {
-                    if (err) throw err;
-                    console.log("Role removed successfully!");
+                    if (err) {
+                        console.log(
+                            "ERROR: Cannot remove role because an employee/employees is currently assigned to that role."
+                        );
+                    } else {
+                        console.log("Role removed successfully!");
+                    }
                     init();
                 }
             );
@@ -406,8 +411,13 @@ function removeDept() {
                     department: response.department,
                 },
                 function (err, res) {
-                    if (err) throw err;
-                    console.log("Department removed successfully!");
+                    if (err) {
+                        console.log(
+                            "ERROR: Cannot remove department because a role/roles is currently assigned to that department."
+                        );
+                    } else {
+                        console.log("Department removed successfully!");
+                    }
                     init();
                 }
             );
