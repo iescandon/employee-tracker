@@ -100,7 +100,7 @@ How do you deliver this? Here are some guidelines:
 
     -   View employees by manager //TODO
 
-    -   Delete departments, roles, and employees //TODO Add error messages when deleting depts/roles that are dependent by employees.
+    -   Delete departments, roles, and employees
 
     -   View the total utilized budget of a department -- ie the combined salaries of all employees in that department
 

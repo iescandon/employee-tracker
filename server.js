@@ -2,6 +2,7 @@ var inquirer = require("inquirer");
 var mysql = require("mysql2");
 var cTable = require("console.table");
 const logo = require("asciiart-logo");
+const chalk = require("chalk");
 const config = require("./package.json");
 console.log(logo(config).render());
 
@@ -257,7 +258,7 @@ function addEmp() {
                 },
                 function (err, res) {
                     if (err) throw err;
-                    console.log("Employee added successfully!");
+                    console.log(chalk.green("Employee added successfully!"));
                     init();
                 }
             );
@@ -300,7 +301,7 @@ function addRole() {
                 },
                 function (err, res) {
                     if (err) throw err;
-                    console.log("Role added successfully!");
+                    console.log(chalk.green("Role added successfully!"));
                     init();
                 }
             );
@@ -325,7 +326,7 @@ function addDept() {
                 },
                 function (err, res) {
                     if (err) throw err;
-                    console.log("Department added successfully!");
+                    console.log(chalk.green("Department added successfully!"));
                     init();
                 }
             );
@@ -357,7 +358,7 @@ function removeEmp() {
                 },
                 function (err, res) {
                     if (err) throw err;
-                    console.log("Employee removed successfully!");
+                    console.log(chalk.green("Employee removed successfully!"));
                     init();
                 }
             );
@@ -383,10 +384,12 @@ function removeRole() {
                 function (err, res) {
                     if (err) {
                         console.log(
-                            "ERROR: Cannot remove role because an employee/employees is currently assigned to that role."
+                            chalk.red(
+                                "ERROR: Cannot remove role because an employee/employees is currently assigned to that role."
+                            )
                         );
                     } else {
-                        console.log("Role removed successfully!");
+                        console.log(chalk.green("Role removed successfully!"));
                     }
                     init();
                 }
@@ -413,10 +416,14 @@ function removeDept() {
                 function (err, res) {
                     if (err) {
                         console.log(
-                            "ERROR: Cannot remove department because a role/roles is currently assigned to that department."
+                            chalk.red(
+                                "ERROR: Cannot remove department because a role/roles is currently assigned to that department."
+                            )
                         );
                     } else {
-                        console.log("Department removed successfully!");
+                        console.log(
+                            chalk.green("Department removed successfully!")
+                        );
                     }
                     init();
                 }
@@ -467,7 +474,9 @@ function updateEmp() {
                 ],
                 function (err, res) {
                     if (err) throw err;
-                    console.log(`${response.employee}'s role is updated!`);
+                    console.log(
+                        chalk.green(`${response.employee}'s role is updated!`)
+                    );
                     init();
                 }
             );
@@ -496,12 +505,15 @@ function getBudget() {
                     INNER JOIN department c ON (b.department_id = c.id)
                     `;
                 connection.query(query, function (err, res) {
+                    if (err) throw err;
                     var budget = 0;
                     res.forEach((emp) => {
                         budget += parseInt(emp.salary);
                     });
                     console.log(
-                        `The combined budget of all departments is: $${budget}`
+                        chalk.green(
+                            `The combined budget of all departments is: $${budget}`
+                        )
                     );
                     init();
                 });
@@ -530,12 +542,15 @@ function getDeptBudget() {
                     WHERE c.department = ?
                     `;
             connection.query(query, response.dept, function (err, res) {
+                if (err) throw err;
                 var budget = 0;
                 res.forEach((emp) => {
                     budget += parseInt(emp.salary);
                 });
                 console.log(
-                    `The budget of the ${response.dept} department is: $${budget}`
+                    chalk.green(
+                        `The budget of the ${response.dept} department is: $${budget}`
+                    )
                 );
                 init();
             });
