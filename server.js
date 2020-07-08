@@ -67,7 +67,9 @@ function getRoles() {
     connection.query("SELECT id, title FROM role", function (err, res) {
         roles = [];
         res.forEach((item) => {
-            roles.push(item.title);
+            if (roles.indexOf(item.title) === -1) {
+                roles.push(item.title);
+            }
         });
         res.forEach((item) => {
             var obj = {
